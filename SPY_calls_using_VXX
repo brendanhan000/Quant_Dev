@@ -1,0 +1,8 @@
+import yfinance as yf
+import pandas as pd
+
+vxx = yf.Ticker("VXX")
+hist = vxx.history(period="1mo")
+ten_day_sma = hist["Close"].iloc[-11:-1].mean()
+
+print(ten_day_sma)
