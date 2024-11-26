@@ -8,21 +8,24 @@ import numpy as np
 
 # print(ten_day_sma)
 
+## Last updated 11/25/2024
 ticker = "IWM"
-data = yf.download(ticker, start="2014-01-01", end="2024-01-01")
+data = yf.download(ticker, start="2023-01-01", end="2024-11-25")
 
 data["daily_return"] = data["Close"].pct_change()
 data["state"] = np.where(data["daily_return"] >= 0, "up", "down")
+data["VWAP"] = (data["Volume"] * ((data["High"] + data["Low"] + data["Close"]) / 3)) / data["Volume"]
 
 print(data)
+print(data["VWAP"])
 
 up_counts = len(data[data["state"] == "up"])
 down_counts = len(data[data["state"] == "down"])
 
-up_to_up = len(data[(data["state"] == "up") & (data["state"].shift(-1) == "up")]) / len(data["state"] == "up")
-down_to_up = len(data[(data["state"] == "up") & (data["state"].shift(-1) == "down")]) / len(data["state"] == "up")
-up_to_down = len(data[(data["state"] == "down") & (data["state"].shift(-1) == "up")]) / len(data["state"] == "down")
-down_to_down = len(data[(data["state"] == "down") & (data["state"].shift(-1) == "down")]) / len(data["state"] == "down")
+up_to_up = len(data[(data["state"] == "up") & (data["state"].shift(-1) == "up")]) / len(data[data['state'] == "up"])
+down_to_up = len(data[(data["state"] == "up") & (data["state"].shift(-1) == "down")]) / len(data[data['state'] == "up"])
+up_to_down = len(data[(data["state"] == "down") & (data["state"].shift(-1) == "up")]) / len(data[data['state'] == "down"])
+down_to_down = len(data[(data["state"] == "down") & (data["state"].shift(-1) == "down")]) / len(data[data['state'] == "down"])
 
 transition_matrix = pd.DataFrame({
     "up": [up_to_up, up_to_down],
